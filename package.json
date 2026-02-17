@@ -1,0 +1,34 @@
+{
+  "name": "wordbook",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:46250/git/kimkanu/wordbook"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.15",
+    "@solidjs/router": "^0.15.4",
+    "drizzle-orm": "^0.45.1",
+    "solid-js": "^1.9.11",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-solid": "^2.11.10"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "drizzle-kit": "^0.31.9",
+    "tailwindcss": "^4.1.18"
+  }
+}
