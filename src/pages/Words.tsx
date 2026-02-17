@@ -88,9 +88,12 @@ export default function WordsPage() {
   }
 
   const statusColors: Record<string, string> = {
-    learning: "bg-amber-50 text-amber-700 border-amber-200",
-    reviewing: "bg-blue-50 text-blue-700 border-blue-200",
-    mastered: "bg-green-50 text-green-700 border-green-200",
+    learning:
+      "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800",
+    reviewing:
+      "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-400 dark:border-blue-800",
+    mastered:
+      "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800",
   };
 
   return (
@@ -102,12 +105,12 @@ export default function WordsPage() {
           placeholder="Search words, definitions, sources..."
           value={search()}
           onInput={(e) => setSearch(e.currentTarget.value)}
-          class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          class="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <select
           value={statusFilter()}
           onChange={(e) => setStatusFilter(e.currentTarget.value)}
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All statuses</option>
           <option value="learning">Learning</option>
@@ -119,7 +122,7 @@ export default function WordsPage() {
           onChange={(e) =>
             setSortBy(e.currentTarget.value as "date" | "alpha")
           }
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="date">Newest first</option>
           <option value="alpha">A - Z</option>
@@ -127,7 +130,7 @@ export default function WordsPage() {
       </div>
 
       {/* Word Count */}
-      <p class="text-xs text-gray-400">
+      <p class="text-xs text-gray-400 dark:text-gray-500">
         {filteredWords().length} word{filteredWords().length !== 1 ? "s" : ""}
         <Show when={search() || statusFilter() !== "all"}>
           {" "}
@@ -138,13 +141,13 @@ export default function WordsPage() {
       {/* Word List */}
       <Show
         when={!wordList.loading}
-        fallback={<p class="text-sm text-gray-400">Loading...</p>}
+        fallback={<p class="text-sm text-gray-400 dark:text-gray-500">Loading...</p>}
       >
         <Show
           when={filteredWords().length > 0}
           fallback={
             <div class="text-center py-12">
-              <p class="text-gray-400 text-sm">
+              <p class="text-gray-400 dark:text-gray-500 text-sm">
                 {search() || statusFilter() !== "all"
                   ? "No words match your filters."
                   : "No words saved yet. Add some from the Articles page."}
@@ -155,35 +158,35 @@ export default function WordsPage() {
           <div class="space-y-2">
             <For each={filteredWords()}>
               {(item) => (
-                <div class="bg-white rounded-lg border border-gray-200 px-4 py-3 group">
+                <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 px-4 py-3 group transition-colors">
                   <div class="flex items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-2 mb-1">
                         <A
                           href={`/words/${item.word.id}`}
-                          class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                          class="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                           {item.word.word}
                         </A>
                         <Show when={item.word.pronunciation}>
-                          <span class="text-xs text-gray-400">
+                          <span class="text-xs text-gray-400 dark:text-gray-500">
                             {item.word.pronunciation}
                           </span>
                         </Show>
                       </div>
                       <Show when={item.word.definition}>
-                        <p class="text-sm text-gray-600 mb-1">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
                           {item.word.definition}
                         </p>
                       </Show>
-                      <div class="flex items-center gap-2 text-xs text-gray-400">
+                      <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
                         <Show when={item.articleTitle}>
                           <span>Source: {item.articleTitle}</span>
                         </Show>
                         <Show when={item.tags.length > 0}>
                           <For each={item.tags}>
                             {(tag) => (
-                              <span class="text-blue-500">#{tag}</span>
+                              <span class="text-blue-500 dark:text-blue-400">#{tag}</span>
                             )}
                           </For>
                         </Show>
@@ -206,7 +209,7 @@ export default function WordsPage() {
                       </select>
                       <button
                         onClick={() => handleDelete(item.word.id)}
-                        class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all text-xs"
+                        class="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs"
                       >
                         Delete
                       </button>

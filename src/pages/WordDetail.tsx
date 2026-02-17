@@ -145,12 +145,17 @@ export default function WordDetailPage() {
     }
   }
 
+  const inputClass =
+    "w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+  const textareaClass =
+    "w-full h-20 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
   return (
     <Show
       when={!data.loading && data()}
       fallback={
         <Show when={data.loading}>
-          <p class="text-sm text-gray-400">Loading...</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500">Loading...</p>
         </Show>
       }
     >
@@ -158,34 +163,34 @@ export default function WordDetailPage() {
         <div class="max-w-xl mx-auto">
           <button
             onClick={() => navigate("/words")}
-            class="text-sm text-gray-400 hover:text-gray-600 mb-4 inline-flex items-center gap-1"
+            class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 mb-4 inline-flex items-center gap-1"
           >
             &larr; Back to Words
           </button>
 
-          <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4 transition-colors">
             {/* Word */}
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                 Word
               </label>
               <input
                 type="text"
                 value={wordText()}
                 onInput={(e) => setWordText(e.currentTarget.value)}
-                class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class={inputClass}
               />
             </div>
 
             {/* Definition */}
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-medium text-gray-500">
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
                   Definition
                 </label>
                 <button
                   onClick={handleFetchDefinition}
-                  class="text-xs text-blue-500 hover:text-blue-700"
+                  class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   Auto-fetch
                 </button>
@@ -193,44 +198,44 @@ export default function WordDetailPage() {
               <textarea
                 value={definition()}
                 onInput={(e) => setDefinition(e.currentTarget.value)}
-                class="w-full h-20 px-3 py-2 border border-gray-200 rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class={textareaClass}
               />
             </div>
 
             {/* Pronunciation */}
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                 Pronunciation
               </label>
               <input
                 type="text"
                 value={pronunciation()}
                 onInput={(e) => setPronunciation(e.currentTarget.value)}
-                class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class={inputClass}
               />
             </div>
 
             {/* Example Sentence */}
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                 Example Sentence
               </label>
               <textarea
                 value={exampleSentence()}
                 onInput={(e) => setExampleSentence(e.currentTarget.value)}
-                class="w-full h-20 px-3 py-2 border border-gray-200 rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class={textareaClass}
               />
             </div>
 
             {/* Status */}
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                 Status
               </label>
               <select
                 value={status()}
                 onChange={(e) => setStatus(e.currentTarget.value)}
-                class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="learning">Learning</option>
                 <option value="reviewing">Reviewing</option>
@@ -240,17 +245,17 @@ export default function WordDetailPage() {
 
             {/* Tags */}
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                 Tags
               </label>
               <div class="flex flex-wrap gap-2 mb-2">
                 <For each={d().tags}>
                   {(tag) => (
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 rounded-full text-xs font-medium">
                       #{tag.tagName}
                       <button
                         onClick={() => handleRemoveTag(tag.tagId)}
-                        class="text-blue-400 hover:text-blue-600"
+                        class="text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
                       >
                         &times;
                       </button>
@@ -265,11 +270,11 @@ export default function WordDetailPage() {
                   value={newTag()}
                   onInput={(e) => setNewTag(e.currentTarget.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddTag()}
-                  class="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="flex-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
                   onClick={handleAddTag}
-                  class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                  class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   Add
                 </button>
@@ -279,15 +284,15 @@ export default function WordDetailPage() {
             {/* Source */}
             <Show when={d().articleTitle}>
               <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                   Source
                 </label>
-                <p class="text-sm text-gray-600">{d().articleTitle}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{d().articleTitle}</p>
               </div>
             </Show>
 
             {/* Actions */}
-            <div class="flex gap-2 pt-2 border-t border-gray-100">
+            <div class="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
               <button
                 onClick={handleSave}
                 disabled={saving()}
@@ -297,7 +302,7 @@ export default function WordDetailPage() {
               </button>
               <button
                 onClick={handleDelete}
-                class="px-4 py-2 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
+                class="px-4 py-2 text-red-600 dark:text-red-400 text-sm font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
               >
                 Delete Word
               </button>
