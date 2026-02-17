@@ -3,7 +3,6 @@ import {
   createResource,
   Show,
   For,
-  onMount,
 } from "solid-js";
 import { useParams, useNavigate } from "@solidjs/router";
 import { getDb } from "~/db";
@@ -44,6 +43,10 @@ export default function WordDetailPage() {
   const [definition, setDefinition] = createSignal("");
   const [pronunciation, setPronunciation] = createSignal("");
   const [exampleSentence, setExampleSentence] = createSignal("");
+  const [etymology, setEtymology] = createSignal("");
+  const [englishCognates, setEnglishCognates] = createSignal("");
+  const [synonyms, setSynonyms] = createSignal("");
+  const [antonyms, setAntonyms] = createSignal("");
   const [status, setStatus] = createSignal<string>("learning");
   const [newTag, setNewTag] = createSignal("");
   const [saving, setSaving] = createSignal(false);
@@ -57,6 +60,10 @@ export default function WordDetailPage() {
         setDefinition(d.word.definition ?? "");
         setPronunciation(d.word.pronunciation ?? "");
         setExampleSentence(d.word.exampleSentence ?? "");
+        setEtymology(d.word.etymology ?? "");
+        setEnglishCognates(d.word.englishCognates ?? "");
+        setSynonyms(d.word.synonyms ?? "");
+        setAntonyms(d.word.antonyms ?? "");
         setStatus(d.word.status);
       }
     },
@@ -72,6 +79,10 @@ export default function WordDetailPage() {
         definition: definition() || null,
         pronunciation: pronunciation() || null,
         exampleSentence: exampleSentence() || null,
+        etymology: etymology() || null,
+        englishCognates: englishCognates() || null,
+        synonyms: synonyms() || null,
+        antonyms: antonyms() || null,
         status: status() as "learning" | "reviewing" | "mastered",
       })
       .where(eq(words.id, Number(params.id)));
@@ -131,14 +142,33 @@ export default function WordDetailPage() {
     if (!word) return;
     try {
       const res = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        `https://api.dictionaryapi.dev/api/v2/entries/fr/${word}`,
       );
       if (res.ok) {
-        const data = await res.json();
-        const def = data[0]?.meanings?.[0]?.definitions?.[0]?.definition;
-        const pron = data[0]?.phonetic || data[0]?.phonetics?.[0]?.text;
+        const apiData = await res.json();
+        const entry = apiData[0];
+        const def = entry?.meanings?.[0]?.definitions?.[0]?.definition;
+        const pron = entry?.phonetic || entry?.phonetics?.[0]?.text;
         if (def) setDefinition(def);
         if (pron) setPronunciation(pron);
+
+        // Try to extract synonyms and antonyms from the API response
+        const allSynonyms: string[] = [];
+        const allAntonyms: string[] = [];
+        for (const meaning of entry?.meanings ?? []) {
+          if (meaning.synonyms) allSynonyms.push(...meaning.synonyms);
+          if (meaning.antonyms) allAntonyms.push(...meaning.antonyms);
+          for (const def of meaning.definitions ?? []) {
+            if (def.synonyms) allSynonyms.push(...def.synonyms);
+            if (def.antonyms) allAntonyms.push(...def.antonyms);
+          }
+        }
+        if (allSynonyms.length > 0 && !synonyms()) {
+          setSynonyms([...new Set(allSynonyms)].slice(0, 5).join(", "));
+        }
+        if (allAntonyms.length > 0 && !antonyms()) {
+          setAntonyms([...new Set(allAntonyms)].slice(0, 5).join(", "));
+        }
       }
     } catch {
       // silently fail
@@ -172,7 +202,7 @@ export default function WordDetailPage() {
             {/* Word */}
             <div>
               <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                Word
+                French Word / Phrase
               </label>
               <input
                 type="text"
@@ -192,12 +222,13 @@ export default function WordDetailPage() {
                   onClick={handleFetchDefinition}
                   class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  Auto-fetch
+                  Auto-fetch (FR)
                 </button>
               </div>
               <textarea
                 value={definition()}
                 onInput={(e) => setDefinition(e.currentTarget.value)}
+                placeholder="French or English definition..."
                 class={textareaClass}
               />
             </div>
@@ -211,6 +242,62 @@ export default function WordDetailPage() {
                 type="text"
                 value={pronunciation()}
                 onInput={(e) => setPronunciation(e.currentTarget.value)}
+                placeholder="e.g. /e.ty.mɔ.lɔ.ʒi/"
+                class={inputClass}
+              />
+            </div>
+
+            {/* Etymology */}
+            <div>
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Etymology
+              </label>
+              <textarea
+                value={etymology()}
+                onInput={(e) => setEtymology(e.currentTarget.value)}
+                placeholder="Origin and history of the word..."
+                class={textareaClass}
+              />
+            </div>
+
+            {/* English Cognates */}
+            <div>
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                English Cognates
+              </label>
+              <input
+                type="text"
+                value={englishCognates()}
+                onInput={(e) => setEnglishCognates(e.currentTarget.value)}
+                placeholder="English words from the same root, e.g. ameliorate, meliorate"
+                class={inputClass}
+              />
+            </div>
+
+            {/* Synonyms */}
+            <div>
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Synonyms
+              </label>
+              <input
+                type="text"
+                value={synonyms()}
+                onInput={(e) => setSynonyms(e.currentTarget.value)}
+                placeholder="e.g. perfectionner, bonifier, progresser"
+                class={inputClass}
+              />
+            </div>
+
+            {/* Antonyms */}
+            <div>
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Antonyms
+              </label>
+              <input
+                type="text"
+                value={antonyms()}
+                onInput={(e) => setAntonyms(e.currentTarget.value)}
+                placeholder="e.g. empirer, aggraver, deteriorer"
                 class={inputClass}
               />
             </div>
@@ -223,6 +310,7 @@ export default function WordDetailPage() {
               <textarea
                 value={exampleSentence()}
                 onInput={(e) => setExampleSentence(e.currentTarget.value)}
+                placeholder="A French sentence using this word..."
                 class={textareaClass}
               />
             </div>

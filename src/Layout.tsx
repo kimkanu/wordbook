@@ -12,7 +12,7 @@ export default function Layout(props: ParentProps) {
               href="/"
               class="text-lg font-bold text-gray-900 dark:text-gray-100 tracking-tight"
             >
-              Wordbook
+              French Wordbook
             </A>
             <div class="flex items-center gap-1">
               <A
@@ -21,7 +21,7 @@ export default function Layout(props: ParentProps) {
                 activeClass="!text-blue-600 dark:!text-blue-400 !bg-blue-50 dark:!bg-blue-950"
                 end
               >
-                Articles
+                Texts
               </A>
               <A
                 href="/words"
@@ -29,6 +29,13 @@ export default function Layout(props: ParentProps) {
                 activeClass="!text-blue-600 dark:!text-blue-400 !bg-blue-50 dark:!bg-blue-950"
               >
                 Words
+              </A>
+              <A
+                href="/vocabulary"
+                class="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                activeClass="!text-blue-600 dark:!text-blue-400 !bg-blue-50 dark:!bg-blue-950"
+              >
+                Vocabulary
               </A>
               <button
                 onClick={toggleDark}

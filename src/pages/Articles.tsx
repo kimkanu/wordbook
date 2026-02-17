@@ -21,98 +21,26 @@ async function fetchArticles() {
 function extractWordsFromText(text: string): string[] {
   const cleaned = text
     .replace(/<[^>]*>/g, " ")
-    .replace(/[^a-zA-Z\s'-]/g, " ")
+    .replace(/[^a-zA-ZÀ-ÿœŒæÆçÇ\s'-]/g, " ")
     .toLowerCase();
-  const allWords = cleaned.split(/\s+/).filter((w) => w.length > 3);
+  const allWords = cleaned.split(/\s+/).filter((w) => w.length > 2);
   const unique = [...new Set(allWords)];
-  // Filter out very common English words
+  // Filter out very common French words (articles, prepositions, pronouns, etc.)
   const stopWords = new Set([
-    "that",
-    "this",
-    "with",
-    "from",
-    "have",
-    "been",
-    "were",
-    "they",
-    "their",
-    "them",
-    "then",
-    "than",
-    "what",
-    "when",
-    "where",
-    "which",
-    "while",
-    "will",
-    "would",
-    "could",
-    "should",
-    "about",
-    "after",
-    "before",
-    "between",
-    "under",
-    "over",
-    "into",
-    "through",
-    "during",
-    "each",
-    "some",
-    "other",
-    "more",
-    "most",
-    "also",
-    "just",
-    "only",
-    "very",
-    "even",
-    "back",
-    "much",
-    "many",
-    "well",
-    "such",
-    "like",
-    "make",
-    "made",
-    "know",
-    "take",
-    "come",
-    "came",
-    "does",
-    "done",
-    "going",
-    "want",
-    "said",
-    "says",
-    "here",
-    "there",
-    "these",
-    "those",
-    "being",
-    "because",
-    "still",
-    "both",
-    "need",
-    "same",
-    "first",
-    "last",
-    "long",
-    "great",
-    "good",
-    "right",
-    "look",
-    "think",
-    "every",
-    "people",
-    "your",
-    "year",
-    "years",
-    "time",
-    "work",
-    "part",
-    "help",
-    "call",
+    "les", "des", "une", "sur", "est", "sont", "dans",
+    "par", "pour", "pas", "que", "qui", "aux", "avec",
+    "son", "ses", "ont", "mais", "cette", "ces",
+    "tout", "tous", "elle", "elles", "ils", "nous",
+    "vous", "leur", "leurs", "mon", "ton", "nos", "vos",
+    "mes", "tes", "lui", "moi", "toi", "soi",
+    "plus", "bien", "peut", "fait", "dire", "comme",
+    "sans", "chez", "sous", "vers", "dont", "donc",
+    "entre", "aussi", "autre", "autres", "quand",
+    "car", "ici", "peu", "trop", "rien",
+    "encore", "toujours", "jamais", "alors", "ainsi",
+    "tre", "avoir", "faire", "aller", "voir",
+    "the", "and", "for", "that", "this", "with", "from",
+    "have", "been", "were", "they", "their", "them",
   ]);
   return unique.filter((w) => !stopWords.has(w));
 }
@@ -163,12 +91,12 @@ export default function ArticlesPage() {
     const db = await getDb();
     const articleId = currentArticleId();
 
-    // Try to fetch definition from Free Dictionary API
+    // Try to fetch definition from Free Dictionary API (French)
     let definition: string | undefined;
     let pronunciation: string | undefined;
     try {
       const res = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        `https://api.dictionaryapi.dev/api/v2/entries/fr/${word}`,
       );
       if (res.ok) {
         const data = await res.json();
@@ -176,7 +104,7 @@ export default function ArticlesPage() {
         pronunciation = data[0]?.phonetic || data[0]?.phonetics?.[0]?.text;
       }
     } catch {
-      // silently fail — user can add definition manually
+      // silently fail -- user can add definition manually
     }
 
     await db.insert(words).values({
@@ -200,7 +128,7 @@ export default function ArticlesPage() {
       {/* Input Section */}
       <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 transition-colors">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Add an Article
+          Add a French Text
         </h2>
 
         <div class="flex gap-2 mb-4">
@@ -228,7 +156,7 @@ export default function ArticlesPage() {
 
         <input
           type="text"
-          placeholder="Article title (optional)"
+          placeholder="Title (optional)"
           value={titleInput()}
           onInput={(e) => setTitleInput(e.currentTarget.value)}
           class="w-full px-3 py-2 mb-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -236,7 +164,7 @@ export default function ArticlesPage() {
 
         <Show when={inputMode() === "text"}>
           <textarea
-            placeholder="Paste your article text here..."
+            placeholder="Paste your French text here..."
             value={textInput()}
             onInput={(e) => setTextInput(e.currentTarget.value)}
             class="w-full h-40 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -251,7 +179,7 @@ export default function ArticlesPage() {
             disabled
           />
           <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-            URL import coming soon. Paste the article text for now.
+            URL import coming soon. Paste the text for now.
           </p>
         </Show>
 
@@ -305,7 +233,7 @@ export default function ArticlesPage() {
       {/* Saved Articles */}
       <section>
         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-          Saved Articles
+          Saved Texts
         </h3>
         <Show
           when={!articleList.loading}
@@ -315,7 +243,7 @@ export default function ArticlesPage() {
             when={articleList()?.length}
             fallback={
               <p class="text-sm text-gray-400 dark:text-gray-500">
-                No articles yet. Paste some text above to get started.
+                No texts yet. Paste some French text above to get started.
               </p>
             }
           >

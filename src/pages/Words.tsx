@@ -2,7 +2,7 @@ import { createSignal, createResource, For, Show, createMemo } from "solid-js";
 import { A } from "@solidjs/router";
 import { getDb } from "~/db";
 import { words, articles, wordTags, tags } from "~/db/schema";
-import { desc, eq, like, ilike, count } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 async function fetchWords() {
   const db = await getDb();
@@ -55,6 +55,9 @@ export default function WordsPage() {
         (item) =>
           item.word.word.toLowerCase().includes(query) ||
           item.word.definition?.toLowerCase().includes(query) ||
+          item.word.etymology?.toLowerCase().includes(query) ||
+          item.word.englishCognates?.toLowerCase().includes(query) ||
+          item.word.synonyms?.toLowerCase().includes(query) ||
           item.articleTitle?.toLowerCase().includes(query),
       );
     }
@@ -65,7 +68,7 @@ export default function WordsPage() {
 
     if (sortBy() === "alpha") {
       list = [...list].sort((a, b) =>
-        a.word.word.localeCompare(b.word.word),
+        a.word.word.localeCompare(b.word.word, "fr"),
       );
     }
 
@@ -102,7 +105,7 @@ export default function WordsPage() {
       <div class="flex flex-col sm:flex-row gap-3">
         <input
           type="text"
-          placeholder="Search words, definitions, sources..."
+          placeholder="Search words, definitions, etymology..."
           value={search()}
           onInput={(e) => setSearch(e.currentTarget.value)}
           class="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -150,7 +153,7 @@ export default function WordsPage() {
               <p class="text-gray-400 dark:text-gray-500 text-sm">
                 {search() || statusFilter() !== "all"
                   ? "No words match your filters."
-                  : "No words saved yet. Add some from the Articles page."}
+                  : "No words saved yet. Add some from the Texts page or browse the Vocabulary list."}
               </p>
             </div>
           }
@@ -179,7 +182,22 @@ export default function WordsPage() {
                           {item.word.definition}
                         </p>
                       </Show>
-                      <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+                      <Show when={item.word.englishCognates}>
+                        <p class="text-xs text-indigo-600 dark:text-indigo-400 mb-1">
+                          English cognates: {item.word.englishCognates}
+                        </p>
+                      </Show>
+                      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 dark:text-gray-500">
+                        <Show when={item.word.synonyms}>
+                          <span class="text-emerald-600 dark:text-emerald-400">
+                            Syn: {item.word.synonyms}
+                          </span>
+                        </Show>
+                        <Show when={item.word.antonyms}>
+                          <span class="text-rose-500 dark:text-rose-400">
+                            Ant: {item.word.antonyms}
+                          </span>
+                        </Show>
                         <Show when={item.articleTitle}>
                           <span>Source: {item.articleTitle}</span>
                         </Show>

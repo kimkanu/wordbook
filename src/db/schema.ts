@@ -27,6 +27,10 @@ export const words = pgTable("words", {
   definition: text("definition"),
   pronunciation: text("pronunciation"),
   exampleSentence: text("example_sentence"),
+  etymology: text("etymology"),
+  englishCognates: text("english_cognates"),
+  synonyms: text("synonyms"),
+  antonyms: text("antonyms"),
   status: wordStatusEnum("status").default("learning").notNull(),
   articleId: integer("article_id").references(() => articles.id, {
     onDelete: "set null",

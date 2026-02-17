@@ -26,10 +26,22 @@ CREATE TABLE IF NOT EXISTS words (
   definition TEXT,
   pronunciation TEXT,
   example_sentence TEXT,
+  etymology TEXT,
+  english_cognates TEXT,
+  synonyms TEXT,
+  antonyms TEXT,
   status word_status DEFAULT 'learning' NOT NULL,
   article_id INTEGER REFERENCES articles(id) ON DELETE SET NULL,
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
+
+-- Add new columns if they don't exist (migration for existing databases)
+DO $$ BEGIN
+  ALTER TABLE words ADD COLUMN IF NOT EXISTS etymology TEXT;
+  ALTER TABLE words ADD COLUMN IF NOT EXISTS english_cognates TEXT;
+  ALTER TABLE words ADD COLUMN IF NOT EXISTS synonyms TEXT;
+  ALTER TABLE words ADD COLUMN IF NOT EXISTS antonyms TEXT;
+END $$;
 
 CREATE TABLE IF NOT EXISTS tags (
   id SERIAL PRIMARY KEY,
